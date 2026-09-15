@@ -1,0 +1,19 @@
+{
+  "name": "قرآن صوت",
+  "short_name": "قرآن صوت",
+  "description": "قرآن با ترجمه فارسی، تفسیر و تلاوت قاریان — قابل استفاده آفلاین",
+  "start_url": "/",
+  "display": "standalone",
+  "dir": "rtl",
+  "lang": "fa",
+  "background_color": "#faf8f2",
+  "theme_color": "#0e7a5f",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

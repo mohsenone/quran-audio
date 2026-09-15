@@ -1,26 +1,73 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --bg: #faf8f2;
+  --surface: #ffffff;
+  --surface2: #f2eee1;
+  --ink: #22301f;
+  --ink2: #66755f;
+  --line: #e4ddc9;
+  --accent: #0e7a5f;
+  --accent-soft: #dcefe7;
+  --gold: #a8842e;
+}
+
+.dark {
+  color-scheme: dark;
+  --bg: #0e1512;
+  --surface: #16211c;
+  --surface2: #1c2a23;
+  --ink: #e9e5d9;
+  --ink2: #97ab9f;
+  --line: #24352c;
+  --accent: #33a87f;
+  --accent-soft: #17332a;
+  --gold: #d4af5f;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface2: var(--surface2);
+  --color-ink: var(--ink);
+  --color-ink2: var(--ink2);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-gold: var(--gold);
+  --font-sans: var(--font-vazir), system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  font-family: var(--font-sans);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: var(--accent-soft);
+}
+
+.quran {
+  font-family: var(--font-quran), serif;
+  font-size: var(--ayah-size, 28px);
+  line-height: 2.2;
+  letter-spacing: 0;
+  word-spacing: 0.08em;
+}
+
+input[type="range"] {
+  accent-color: var(--accent);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
 }
