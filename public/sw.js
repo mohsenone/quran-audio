@@ -32,8 +32,21 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
-  // our API: network-first, fall back to cache offline
+  // our text API: network-first, fall back to cache offline
+  // audio proxy: immutable files — cache-first
   if (url.pathname.startsWith("/api/")) {
+    if (url.pathname.startsWith("/api/audio/")) {
+      e.respondWith(
+        caches.open(CACHE).then(async (c) => {
+          const hit = await c.match(e.request);
+          if (hit) return hit;
+          const res = await fetch(e.request);
+          if (res.ok) c.put(e.request, res.clone());
+          return res;
+        })
+      );
+      return;
+    }
     e.respondWith(
       fetch(e.request)
         .then((res) => {

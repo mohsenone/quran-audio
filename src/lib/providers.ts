@@ -94,7 +94,8 @@ export async function getAudioUrls(surahId: number, reciterId: number): Promise<
   const data = await res.json();
   const map: Record<string, string> = {};
   for (const f of data.audio_files as any[]) {
-    map[f.verse_key] = `https://verses.quran.com/${f.url}`;
+    // stream through our origin (Iran-CDN-friendly), same-origin = no CORS
+    map[f.verse_key] = `/api/audio/${f.url}`;
   }
   return map;
 }
