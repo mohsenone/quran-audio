@@ -3,6 +3,7 @@ import { Vazirmatn, Amiri_Quran } from "next/font/google";
 import "./globals.css";
 import { SWRegister } from "@/components/SWRegister";
 import { Shell } from "@/components/Shell";
+import { InstallPrompt } from "@/components/InstallPrompt";
 
 const vazir = Vazirmatn({ subsets: ["arabic", "latin"], variable: "--font-vazir", display: "swap" });
 const quran = Amiri_Quran({ weight: "400", subsets: ["arabic"], variable: "--font-quran", display: "swap" });
@@ -20,7 +21,7 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-const themeInit = `(function(){try{var s=JSON.parse(localStorage.getItem('quran-audio')||'{}').state;if(s&&s.settings){var t=s.settings.theme;if(t==='dark'||(t==='system'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');}else if(matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');}catch(e){}})();`;
+const themeInit = `(function(){try{addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__bip=e;});var s=JSON.parse(localStorage.getItem('quran-audio')||'{}').state;if(s&&s.settings){var t=s.settings.theme;if(t==='dark'||(t==='system'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');}else if(matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');}catch(e){}})();`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="min-h-full">
         <SWRegister />
+        <InstallPrompt />
         <Shell>{children}</Shell>
       </body>
     </html>
