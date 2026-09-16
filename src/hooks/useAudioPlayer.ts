@@ -18,6 +18,7 @@ export interface PlayerState {
 export function useAudioPlayer(opts: {
   ayahs: { key: string; n: number }[];
   audioMap: Record<string, string>;
+  translations?: Record<string, string>;
 }) {
   const settings = useQuranStore((s) => s.settings);
   const setSetting = useQuranStore((s) => s.setSetting);
@@ -51,10 +52,27 @@ export function useAudioPlayer(opts: {
       }
       const idx = ayahsRef.current.findIndex((a) => a.n === cur.ayahN);
       const nxt = ayahsRef.current[idx + 1];
+      // خواندن ترجمهٔ فارسی با TTS بعد از اتمام آیه (وقتی فعال باشد)
+      const speakThen = (cont: () => void) => {
+        const speak = speakTranslationRef.current;
+        const key = cur.ayahN != null ? `${Number(ayahsRef.current[0]?.key.split(":")[0])}:${cur.ayahN}` : null;
+        const text = speak && key ? transRef.current[key] : null;
+        if (!text || typeof speechSynthesis === "undefined") return cont();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = "fa-IR";
+        u.rate = 0.95;
+        const voice = speechSynthesis.getVoices().find((v) => v.lang.startsWith("fa"));
+        if (voice) u.voice = voice;
+        u.onend = () => cont();
+        u.onerror = () => cont();
+        speechSynthesis.cancel();
+        speechSynthesis.speak(u);
+        setSt((s) => ({ ...s, loading: true })); // «در حال خواندن ترجمه»
+      };
       if (nxt && autoNextRef.current) {
-        playAyahRef.current(nxt.n, true);
+        speakThen(() => playAyahRef.current(nxt.n, true));
       } else if (!nxt && repeatRef.current === "surah" && ayahsRef.current[0]) {
-        playAyahRef.current(ayahsRef.current[0].n, true);
+        speakThen(() => playAyahRef.current(ayahsRef.current[0].n, true));
       } else {
         setSt((s) => ({ ...s, playing: false }));
       }
@@ -78,6 +96,11 @@ export function useAudioPlayer(opts: {
   repeatRef.current = settings.repeatMode;
   const autoNextRef = useRef(settings.autoPlayNext);
   autoNextRef.current = settings.autoPlayNext;
+  const speakTranslationRef = useRef(settings.speakTranslation);
+  speakTranslationRef.current = settings.speakTranslation;
+  // ترجمه‌ها از صفحه تزریق می‌شوند (اینجا فقط خوانده می‌شوند)
+  const transRef = useRef<Record<string, string>>(opts.translations ?? {});
+  transRef.current = opts.translations ?? {};
 
   const playAyah = useCallback(
     (ayahN: number, autoplay = true) => {
@@ -138,6 +161,7 @@ export function useAudioPlayer(opts: {
 
   const pause = useCallback(() => {
     elRef.current?.pause();
+    if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
     setSt((s) => ({ ...s, playing: false }));
   }, []);
 
@@ -173,6 +197,7 @@ export function useAudioPlayer(opts: {
       el.pause();
       el.removeAttribute("src");
     }
+    if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
     setSt({ playing: false, surahId: null, ayahN: null, loading: false, duration: 0, position: 0, error: null });
   }, []);
 

@@ -103,7 +103,7 @@ export default function SurahPage() {
   }, [ayahs?.length, surah?.nameFa]);
 
   const ayahKeys = useMemo(() => (ayahs ?? []).map((a) => ({ key: a.key, n: a.n })), [ayahs]);
-  const player = useAudioPlayer({ ayahs: ayahKeys, audioMap });
+  const player = useAudioPlayer({ ayahs: ayahKeys, audioMap, translations: trans });
   const playingKey = player.st.surahId === surahId ? player.st.ayahN : null;
 
   if (!Number.isInteger(surahId) || surahId < 1 || surahId > 114) {

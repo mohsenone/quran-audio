@@ -1,6 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <rect width="128" height="128" rx="28" fill="#0e7a5f"/>
-  <path d="M64 22c-18 0-32 13-32 30v54c0-9 10-14 22-14h10c11 0 20 5 20 14V52c0-17-4-30-20-30z" fill="none" stroke="#faf8f2" stroke-width="6" stroke-linejoin="round"/>
-  <path d="M78 44c8 0 14 6 14 14" stroke="#d4af5f" stroke-width="5" fill="none" stroke-linecap="round"/>
-  <circle cx="88" cy="70" r="4" fill="#d4af5f"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0f8a6c"/>
+      <stop offset="1" stop-color="#0a5c47"/>
+    </linearGradient>
+    <linearGradient id="page" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fffdf6"/>
+      <stop offset="1" stop-color="#f3ecd8"/>
+    </linearGradient>
+  </defs>
+  <!-- background -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- subtle geometric pattern: 8-point star lattice hints -->
+  <g stroke="#ffffff" stroke-opacity=".07" stroke-width="6" fill="none">
+    <circle cx="256" cy="256" r="190"/>
+    <circle cx="256" cy="256" r="150"/>
+    <path d="M66 256h380M256 66v380M120 120l272 272M392 120L120 392"/>
+  </g>
+  <!-- open quran book -->
+  <g>
+    <path d="M96 320c48-28 96-28 152-6 56-22 104-22 152 6v74c-48-28-96-28-152 0-56-28-104-28-152 0z" fill="url(#page)" stroke="#c9a44a" stroke-width="10" stroke-linejoin="round"/>
+    <path d="M96 320c48-28 96-28 152-6 56-22 104-22 152 6" fill="none" stroke="#c9a44a" stroke-width="8" stroke-linecap="round"/>
+    <!-- text lines on pages -->
+    <g stroke="#8a7a55" stroke-width="9" stroke-linecap="round" opacity=".75">
+      <path d="M124 352c40-18 78-18 116-4"/>
+      <path d="M272 348c38-14 76-14 116 4"/>
+      <path d="M124 378c40-18 78-18 116-4"/>
+      <path d="M272 374c38-14 76-14 116 4"/>
+    </g>
+    <!-- gold clasp -->
+    <rect x="246" y="330" width="20" height="58" rx="8" fill="#d4af5f" stroke="#a8842f" stroke-width="5"/>
+  </g>
+  <!-- dome / mihrab arch above -->
+  <path d="M256 96c-44 30-70 66-70 108h140c0-42-26-78-70-108z" fill="#f6efdd" stroke="#c9a44a" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M256 118v56" stroke="#0a5c47" stroke-width="9" stroke-linecap="round"/>
+  <path d="M228 148c8-12 48-12 56 0" fill="none" stroke="#0a5c47" stroke-width="9" stroke-linecap="round"/>
 </svg>

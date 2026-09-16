@@ -111,6 +111,20 @@ export default function SettingsPage() {
             label="خاموش"
           />
         </Row>
+        <Row label="خواندن ترجمه بعد از آیه (صوتی)">
+          <Choice
+            value={"on"}
+            current={settings.speakTranslation ? "on" : "off"}
+            onPick={() => setSetting("speakTranslation", true)}
+            label="روشن"
+          />
+          <Choice
+            value={"off"}
+            current={settings.speakTranslation ? "on" : "off"}
+            onPick={() => setSetting("speakTranslation", false)}
+            label="خاموش"
+          />
+        </Row>
         <Row label="تکرار">
           {([["none", "بدون"], ["ayah", "آیه"], ["surah", "سوره"]] as const).map(([v, l]) => (
             <Choice key={v} value={v} current={settings.repeatMode} onPick={(x) => setSetting("repeatMode", x)} label={l} />

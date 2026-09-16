@@ -3,6 +3,7 @@ import type { Surah, Ayah, Reciter, TafsirInfo, SearchResult } from "@/types/qur
 
 const QURANCOM = "https://api.quran.com/api/v4";
 const ALQURAN = "https://api.alquran.cloud/v1";
+const QURANENC = "https://quranenc.com/api/v1";
 
 export const FA_TRANSLATIONS = [
   { id: "fa.fooladvand", name: "فولادوند" },
@@ -14,6 +15,7 @@ export const FA_TRANSLATIONS = [
 ] as const;
 
 export const TAFSIR_EDITIONS = [
+  { id: "fa.saadi", name: "تفسیر سعدی (فارسی)" },
   { id: "ar.muyassar", name: "تفسیر المیسر" },
   { id: "ar.jalalayn", name: "تفسیر جلالین" },
   { id: "ar.qurtubi", name: "تفسیر قرطبی" },
@@ -65,6 +67,26 @@ export async function getTranslation(surahId: number, edition: string): Promise<
 }
 
 export async function getTafsir(surahId: number, edition: string): Promise<Record<string, string>> {
+  // تفسیر فارسی سعدی از QuranEnc (per-aya). بقیه: alquran.cloud per-surah.
+  if (edition === "fa.saadi") {
+    const versesCount = (await getSurahs()).find((s) => s.id === surahId)?.versesCount ?? 0;
+    const results = await Promise.all(
+      Array.from({ length: versesCount }, (_, i) => i + 1).map(async (n) => {
+        try {
+          const res = await fetch(`${QURANENC}/translation/aya/persian_saadi/${surahId}/${n}`);
+          if (!res.ok) return [n, ""] as const;
+          const d = await res.json();
+          return [n, (d.result?.translation as string) ?? ""] as const;
+        } catch {
+          return [n, ""] as const;
+        }
+      })
+    );
+    const map: Record<string, string> = {};
+    for (const [n, text] of results) if (text) map[`${surahId}:${n}`] = text;
+    if (!Object.keys(map).length) throw new Error("tafsir fa.saadi empty");
+    return map;
+  }
   const res = await fetch(`${ALQURAN}/surah/${surahId}/${edition}`);
   if (!res.ok) throw new Error(`tafsir ${res.status}`);
   const data = await res.json();

@@ -15,6 +15,8 @@ export interface Settings {
   autoPlayNext: boolean;
   repeatMode: "none" | "ayah" | "surah";
   playbackRate: number;
+  /** خواندن ترجمهٔ فارسی بعد از صوت آیه (Web Speech) */
+  speakTranslation: boolean;
 }
 
 interface QuranState {
@@ -38,6 +40,7 @@ export const DEFAULT_SETTINGS: Settings = {
   autoPlayNext: true,
   repeatMode: "none",
   playbackRate: 1,
+  speakTranslation: false,
 };
 
 const FONT_SIZES: Record<number, string> = { 1: "22px", 2: "28px", 3: "34px", 4: "42px" };
