@@ -106,6 +106,23 @@ export default function SurahPage() {
   const player = useAudioPlayer({ ayahs: ayahKeys, audioMap, translations: trans });
   const playingKey = player.st.surahId === surahId ? player.st.ayahN : null;
 
+  // دنبال‌کردن متن با پخش: اسکرول خودکار به آیهٔ در حال پخش (اگر خود کاربر اسکرول نکرده باشد)
+  const followRef = useRef(true);
+  useEffect(() => {
+    const onWheel = () => (followRef.current = false);
+    const onTouch = () => (followRef.current = false);
+    addEventListener("wheel", onWheel, { passive: true });
+    addEventListener("touchstart", onTouch, { passive: true });
+    return () => {
+      removeEventListener("wheel", onWheel);
+      removeEventListener("touchstart", onTouch);
+    };
+  }, []);
+  useEffect(() => {
+    if (!playingKey || !followRef.current) return;
+    document.getElementById(`ayah-${playingKey}`)?.scrollIntoView({ block: "center", behavior: "smooth" });
+  }, [playingKey]);
+
   if (!Number.isInteger(surahId) || surahId < 1 || surahId > 114) {
     return <ErrorState message="شماره سوره نامعتبر است" />;
   }

@@ -81,12 +81,17 @@ export const AyahCard = memo(function AyahCard({
         {ayah.sajda && <span className="text-xs text-gold">۩ سجده</span>}
       </div>
 
-      <p dir="rtl" lang="ar" className="quran text-ink" style={{ "--ayah-size": undefined } as React.CSSProperties}>
+      <p
+        dir="rtl"
+        lang="ar"
+        className={cn("quran text-ink", playing && "font-bold")}
+        style={{ "--ayah-size": undefined } as React.CSSProperties}
+      >
         {ayah.text}
       </p>
 
       {showT && translation && (
-        <p dir="rtl" className="mt-3 border-t border-line pt-3 leading-7 text-ink2">
+        <p dir="rtl" className={cn("mt-3 border-t border-line pt-3 leading-7", playing ? "text-ink font-medium" : "text-ink2")}>
           {translation}
         </p>
       )}
