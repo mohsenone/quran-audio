@@ -23,6 +23,17 @@ export const TAFSIR_EDITIONS = [
   { id: "ar.waseet", name: "تفسیر واسط" },
 ] as const;
 
+// قاریان ایرانی (فارسی‌خوان) — آیه‌به‌آیه از everyayah.com. id ≥ 100 تا با قاریان quran.com قاطی نشود.
+// (پرهیزگار و منصوری: روایت فارسی/ترجمه‌خوان؛ مسیرها از فهرست رسمی everyayah recitations.js)
+export const IRANIAN_RECITERS: Reciter[] = [
+  { id: 100, name: "پرهیزگار (فارسی)", style: "ترجمه‌خوان" },
+  { id: 101, name: "کریم منصوری (فارسی)", style: "ترجمه‌خوان" },
+];
+const EVERYAYAH_FOLDER: Record<number, string> = {
+  100: "Parhizgar_48kbps",
+  101: "Karim_Mansoori_40kbps",
+};
+
 const SURAH_NAMES_FA = [
   "حمد","بقره","آل عمران","نساء","مائده","انعام","اعراف","انفال","توبه","یونس","هود","یوسف","رعد","ابراهیم","حجر","نحل","اسراء","کهف","مریم","طه","انبیاء","حج","مومنون","نور","فرقان","شعراء","نمل","قصص","عنکبوت","روم","لقمان","سجده","احزاب","سبا","فاطر","یس","صافات","ص","زمر","غافر","فصلت","شوری","زخرف","دخان","جاثیه","احقاف","محمد","فتح","حجرات","ق","ذاریات","طور","نجم","قمر","رحمن","واقعه","حدید","مجادله","حشر","ممتحنه","صف","جمعه","منافقون","تغابن","طلاق","تحریم","ملک","قلم","حاقه","معارج","نوح","جن","مزمل","مدثر","قیامه","انسان","مرسلات","نبأ","نازعات","عبس","تکویر","انفطار","مطففین","انشقاق","بروج","طارق","اعلی","غاشیه","فجر","بلد","شمس","لیل","ضحی","شرح","تین","علق","قدر","بینه","زلزله","عادیات","قارعه","تکاثر","عصر","همزه","فیل","قریش","ماعون","کوثر","کافرون","نصر","لهب","اخلاص","فلق","ناس",
 ];
@@ -99,11 +110,12 @@ export async function getReciters(): Promise<Reciter[]> {
   const res = await fetch(`${QURANCOM}/resources/recitations`);
   if (!res.ok) throw new Error(`recitations ${res.status}`);
   const data = await res.json();
-  return (data.recitations as any[]).map((r) => ({
+  const base: Reciter[] = (data.recitations as any[]).map((r) => ({
     id: r.id,
     name: r.reciter_name,
     style: r.style,
   }));
+  return [...IRANIAN_RECITERS, ...base]; // ایرانی‌ها اول
 }
 
 export async function getTafsirSources(): Promise<TafsirInfo[]> {
@@ -111,6 +123,17 @@ export async function getTafsirSources(): Promise<TafsirInfo[]> {
 }
 
 export async function getAudioUrls(surahId: number, reciterId: number): Promise<Record<string, string>> {
+  // قاریان ایرانی: مسیر آیه‌به‌آیه از everyayah (پوش‌شده توسط /api/audio)
+  const folder = EVERYAYAH_FOLDER[reciterId];
+  if (folder) {
+    const versesCount = (await getSurahs()).find((s) => s.id === surahId)?.versesCount ?? 0;
+    const pad = (n: number, w = 3) => String(n).padStart(w, "0");
+    const map: Record<string, string> = {};
+    for (let n = 1; n <= versesCount; n++) {
+      map[`${surahId}:${n}`] = `/api/audio/everyayah/${folder}/${pad(surahId)}${pad(n)}.mp3`;
+    }
+    return map;
+  }
   const res = await fetch(`${QURANCOM}/recitations/${reciterId}/by_chapter/${surahId}?per_page=300`);
   if (!res.ok) throw new Error(`audio ${res.status}`);
   const data = await res.json();
